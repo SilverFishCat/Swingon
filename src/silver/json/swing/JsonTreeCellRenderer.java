@@ -59,13 +59,13 @@ public class JsonTreeCellRenderer extends DefaultTreeCellRenderer {
 	 */
 	public JsonTreeCellRenderer() {
 		ClassLoader classLoader = getClass().getClassLoader();
-		_objectIcon = new ImageIcon(classLoader.getResource("img\\jsonobjecticon.png"));
-		_arrayIcon = new ImageIcon(classLoader.getResource("img\\jsonarrayicon.png"));
-		_stringIcon = new ImageIcon(classLoader.getResource("img\\jsonstringicon.png"));
-		_numberIcon = new ImageIcon(classLoader.getResource("img\\jsonnumbericon.png"));
-		_booleanIcon = new ImageIcon(classLoader.getResource("img\\jsonbooleanicon.png"));
-		_nullIcon = new ImageIcon(classLoader.getResource("img\\jsonnullicon.png"));
-		_unknownIcon = new ImageIcon(classLoader.getResource("img\\jsonunknownicon.png"));
+		_objectIcon = new ImageIcon(classLoader.getResource("img/jsonobjecticon.png"));
+		_arrayIcon = new ImageIcon(classLoader.getResource("img/jsonarrayicon.png"));
+		_stringIcon = new ImageIcon(classLoader.getResource("img/jsonstringicon.png"));
+		_numberIcon = new ImageIcon(classLoader.getResource("img/jsonnumbericon.png"));
+		_booleanIcon = new ImageIcon(classLoader.getResource("img/jsonbooleanicon.png"));
+		_nullIcon = new ImageIcon(classLoader.getResource("img/jsonnullicon.png"));
+		_unknownIcon = new ImageIcon(classLoader.getResource("img/jsonunknownicon.png"));
 	}
 
 	/**
