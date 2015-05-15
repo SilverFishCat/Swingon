@@ -1,8 +1,10 @@
 package silver.json.swing;
 
 import java.awt.Component;
+import java.awt.event.MouseEvent;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.util.EventObject;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.DefaultCellEditor;
@@ -60,6 +62,20 @@ public class TypedJsonTreeCellEditor extends AbstractCellEditor implements TreeC
 		_lastObjectType = JsonToken.NULL;
 	}
 	
+	@Override
+	public boolean isCellEditable(EventObject e) {
+		MouseEvent mouseEvent = (MouseEvent) e;
+		JTree tree = (JTree) e.getSource();
+		Object nodeObject = tree.getPathForLocation(mouseEvent.getX(), mouseEvent.getY()).getLastPathComponent();
+		if(nodeObject instanceof JsonTreeNode){
+			JsonTreeNode node = (JsonTreeNode) nodeObject;
+			JsonElement jsonValue = node.getValue();
+			
+			return jsonValue.isJsonPrimitive();
+		}
+		
+		return false;
+	}
 	@Override
 	public Object getCellEditorValue() {
 		switch (_lastObjectType) {
