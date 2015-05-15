@@ -22,10 +22,7 @@
 
 package silver.json.swing;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.swing.event.TreeModelEvent;
@@ -33,9 +30,8 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
-import com.google.gson.JsonArray;
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 
 /**
  * A json tree model.
@@ -45,7 +41,6 @@ import com.google.gson.JsonObject;
  *
  */
 public class JsonTreeModel implements TreeModel {
-	private JsonElement _element;
 	private JsonTreeNode _root;
 	private Set<TreeModelListener> _listeners;
 	
@@ -65,8 +60,7 @@ public class JsonTreeModel implements TreeModel {
 	 * @param element The new root element
 	 */
 	public void setElement(JsonElement element){
-		_element = element;
-		buildTree();
+		_root = new JsonTreeNode(element);
 		
 		// TODO?: optimize
 		for (TreeModelListener treeModelListener : _listeners) {
@@ -83,50 +77,7 @@ public class JsonTreeModel implements TreeModel {
 	 * @return The root element of the model
 	 */
 	public JsonElement getElement(){
-		return _element;
-	}
-	
-	/**
-	 * Build the underline tree in the model.
-	 */
-	private void buildTree(){
-		_root = buildJsonTreeNode(_element);
-	}
-	/**
-	 * Build a JsonTreeNode tree starting from the given element
-	 * @param element The element to build the tree from
-	 * @return The root node of the built tree
-	 */
-	private JsonTreeNode buildJsonTreeNode(JsonElement element) {
-		return buildJsonTreeNode(element, null);
-	}
-	/**
-	 * Build a JsonTreeNode tree starting from the given element, giving the root the
-	 * given name.
-	 * 
-	 * @param element The root element of the new tree
-	 * @param name The name to give the root element
-	 * @return The root node of the built tree
-	 */
-	private JsonTreeNode buildJsonTreeNode(JsonElement element, String name) {
-		List<JsonTreeNode> children = new ArrayList<JsonTreeNode>();
-		
-		if(element.isJsonArray()){
-			JsonArray array = element.getAsJsonArray();
-			
-			for (JsonElement jsonElement : array) {
-				children.add(buildJsonTreeNode(jsonElement));
-			}
-		}
-		else if(element.isJsonObject()){
-			JsonObject object = element.getAsJsonObject();
-			
-			for (Entry<String, JsonElement> entry : object.entrySet()) {
-				children.add(buildJsonTreeNode(entry.getValue(), entry.getKey()));
-			}
-		}
-		
-		return new JsonTreeNode(element, children, name);
+		return _root.getValue();
 	}
 	
 	@Override
@@ -178,8 +129,11 @@ public class JsonTreeModel implements TreeModel {
 	}
 	@Override
 	public void valueForPathChanged(TreePath path, Object newValue) {
-		if(path.getLastPathComponent() != newValue){
-			// TODO: insert additional logic
+		JsonElement valueElement = new Gson().toJsonTree(newValue);
+		
+		JsonTreeNode node = (JsonTreeNode) path.getLastPathComponent();
+		if(!node.getValue().equals(valueElement)){
+			node.setValue(valueElement);
 			
 			for (TreeModelListener treeModelListener : _listeners) {
 				treeModelListener.treeNodesChanged(new TreeModelEvent(this, path));

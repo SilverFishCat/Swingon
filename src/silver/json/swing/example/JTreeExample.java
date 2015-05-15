@@ -1,5 +1,7 @@
 package silver.json.swing.example;
 
+import javax.swing.DefaultCellEditor;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.BoxLayout;
 import javax.swing.JScrollPane;
@@ -58,6 +60,8 @@ public class JTreeExample extends JDialog {
 				JTree tree = new JTree();
 				tree.setModel(new JsonTreeModel(rootElement));
 				tree.setCellRenderer(new JsonTreeCellRenderer());
+				tree.setCellEditor(new DefaultCellEditor(new JComboBox<String>(new String[]{"adasd", "sdfdsf"})));
+				tree.setEditable(true);
 				scrollPane.setViewportView(tree);
 			}
 		}

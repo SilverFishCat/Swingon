@@ -24,8 +24,11 @@ package silver.json.swing;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 /**
  * A node in a json tree.
@@ -53,36 +56,11 @@ public class JsonTreeNode {
 	 * @param elementName The name of the element
 	 */
 	public JsonTreeNode(JsonElement value, String elementName){
-		this(value, null, elementName);
-	}
-	/**
-	 * Create a new json tree node.
-	 * 
-	 * @param value The json element of this node
-	 * @param children The children nodes of the new node
-	 */
-	public JsonTreeNode(JsonElement value, List<JsonTreeNode> children){
-		this(value, children, null);
-	}
-	/**
-	 * Create a new json tree node.
-	 * 
-	 * @param value The json element of this node
-	 * @param children The children nodes of the new node
-	 * @param elementName The name of the element
-	 */
-	public JsonTreeNode(JsonElement value, List<JsonTreeNode> children, String elementName){
-		this._value = value;
-		
+		setValue(value);
 		if(elementName == null)
 			this._elementName = null;
 		else
 			this._elementName = elementName;
-		
-		if(children == null)
-			this._children = new ArrayList<JsonTreeNode>();
-		else
-			this._children = new ArrayList<>(children);
 	}
 	
 	/**
@@ -92,6 +70,41 @@ public class JsonTreeNode {
 	 */
 	public JsonElement getValue(){
 		return _value;
+	}
+	/**
+	 * Set the value of this node, creating the child nodes.
+	 * 
+	 * @param value The value of this node
+	 */
+	public void setValue(JsonElement value){
+		setValue(value, true);
+	}
+	/**
+	 * Set the value of this node, creating the children only if told to.
+	 * 
+	 * @param value The value of this node
+	 * @param createChildren Whether to create the children or not
+	 */
+	public void setValue(JsonElement value, boolean createChildren){
+		_value = value;
+		if(createChildren)
+			createChildren();
+	}
+	/**
+	 * Get the name of the node, if it's a subnode to an object.
+	 * 
+	 * @return The name of the node
+	 */
+	public String getName(){
+		return _elementName;
+	}
+	/**
+	 * Set the name of the node.
+	 * 
+	 * @param name The name of the node
+	 */
+	public void setName(String name){
+		_elementName = name;
 	}
 	/**
 	 * Get all the child nodes of this node.
@@ -110,7 +123,6 @@ public class JsonTreeNode {
 	public boolean isLeaf(){
 		return (!_value.isJsonArray()) && (!_value.isJsonObject());
 	}
-	
 	@Override
 	public String toString() {
 		String name = _elementName;
@@ -136,5 +148,27 @@ public class JsonTreeNode {
 		}
 		
 		return name + valueString;
+	}
+	
+	/**
+	 * Create the childrens of this node.
+	 */
+	private void createChildren(){
+		_children = new ArrayList<JsonTreeNode>();
+		
+		if(_value.isJsonArray()){
+			JsonArray array = _value.getAsJsonArray();
+			
+			for (JsonElement jsonElement : array) {
+				_children.add(new JsonTreeNode(jsonElement));
+			}
+		}
+		else if(_value.isJsonObject()){
+			JsonObject object = _value.getAsJsonObject();
+			
+			for (Entry<String, JsonElement> entry : object.entrySet()) {
+				_children.add(new JsonTreeNode(entry.getValue(), entry.getKey()));
+			}
+		}
 	}
 }
