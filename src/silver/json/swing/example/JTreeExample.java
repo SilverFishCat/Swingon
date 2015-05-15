@@ -1,18 +1,22 @@
 package silver.json.swing.example;
 
-import javax.swing.DefaultCellEditor;
-import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.BoxLayout;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 
+import silver.json.swing.TypedJsonTreeCellEditor;
 import silver.json.swing.JsonTreeCellRenderer;
 import silver.json.swing.JsonTreeModel;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 
+/**
+ * An example of a JSON displayed in a JTree, using the libraries' components.
+ * 
+ * @author SilverFishCat
+ *
+ */
 public class JTreeExample extends JDialog {
 	/**
 	 * 
@@ -23,23 +27,8 @@ public class JTreeExample extends JDialog {
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
-		try {
-			JsonElement rootElement = new JsonParser().parse("{"
-					+ "\"text\" : \"lorem ipsum etc etc etc\", "
-					+ "\"number\" : 123, "
-					+ "\"array\" : ["
-					+ "1, 2, 3, "
-					+ "\"a\", \"b\", \"c\","
-					+ "true, null, false"
-					+ "],"
-					+ "\"object\" : {"
-					+ "\"a\" : \"x\","
-					+ "\"b\" : \"y\","
-					+ "\"c\" : \"z\""
-					+ "}"
-					+ "}");
-			
-			JTreeExample dialog = new JTreeExample(rootElement);
+		try {			
+			JTreeExample dialog = new JTreeExample(Util.getExampleJsonObject());
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 		} catch (Exception e) {
@@ -60,7 +49,7 @@ public class JTreeExample extends JDialog {
 				JTree tree = new JTree();
 				tree.setModel(new JsonTreeModel(rootElement));
 				tree.setCellRenderer(new JsonTreeCellRenderer());
-				tree.setCellEditor(new DefaultCellEditor(new JComboBox<String>(new String[]{"adasd", "sdfdsf"})));
+				tree.setCellEditor(new TypedJsonTreeCellEditor());
 				tree.setEditable(true);
 				scrollPane.setViewportView(tree);
 			}
