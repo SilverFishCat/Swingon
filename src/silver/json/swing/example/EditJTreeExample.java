@@ -1,16 +1,21 @@
 package silver.json.swing.example;
 
 import java.awt.BorderLayout;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JDialog;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JTree;
 import javax.swing.JScrollPane;
 
+import silver.json.swing.ConstrainedJsonTreeCellEditor;
 import silver.json.swing.JsonTreeCellRenderer;
+import silver.json.swing.JsonTreeConstraint;
 import silver.json.swing.JsonTreeModel;
 import silver.json.swing.PlainJsonTreeCellEditor;
 import silver.json.swing.TypedJsonTreeCellEditor;
@@ -29,6 +34,7 @@ public class EditJTreeExample extends JDialog implements ChangeListener {
 	private JRadioButton rdbtnTypedJsonEditor;
 	private JTree tree;
 	private JRadioButton rdbtnPlainJsonEditor;
+	private JRadioButton rdbtnConstrainedJsonEditor;
 
 	/**
 	 * Launch the application.
@@ -71,9 +77,14 @@ public class EditJTreeExample extends JDialog implements ChangeListener {
 		rdbtnTypedJsonEditor.addChangeListener(this);
 		panel.add(rdbtnTypedJsonEditor);
 		
+		rdbtnConstrainedJsonEditor = new JRadioButton("Constrained JSON editor");
+		rdbtnConstrainedJsonEditor.addChangeListener(this);
+		panel.add(rdbtnConstrainedJsonEditor);
+		
 		ButtonGroup editorRadioButtonsGroup = new ButtonGroup();
 		editorRadioButtonsGroup.add(rdbtnPlainJsonEditor);
 		editorRadioButtonsGroup.add(rdbtnTypedJsonEditor);
+		editorRadioButtonsGroup.add(rdbtnConstrainedJsonEditor);
 		
 		rdbtnPlainJsonEditor.setSelected(true);
 	}
@@ -87,6 +98,18 @@ public class EditJTreeExample extends JDialog implements ChangeListener {
 			}
 			else if(e.getSource() == rdbtnPlainJsonEditor){
 				tree.setCellEditor(new PlainJsonTreeCellEditor());
+				tree.setEditable(true);
+			}
+			else if(e.getSource() == rdbtnConstrainedJsonEditor){
+				JsonTreeConstraint.Node root = new JsonTreeConstraint.Node();
+				JsonTreeConstraint.Node son = new JsonTreeConstraint.Node();
+				son.setIsEditable(true);
+				List<JsonElement> possibleValues = new ArrayList<>();
+				possibleValues.add(new JsonPrimitive("option1"));
+				son.setPossibleValues(possibleValues);
+				son.setIsFreelyEditable(true);
+				root.getChildNodes().put("text", son);
+				tree.setCellEditor(new ConstrainedJsonTreeCellEditor(new JsonTreeConstraint(root)));
 				tree.setEditable(true);
 			}
 		}
