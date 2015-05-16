@@ -16,12 +16,7 @@ import silver.json.swing.JsonTreeConstraint.JsonPath;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
-public class ConstrainedJsonTreeCellEditor implements TreeCellEditor {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -5759072385860431595L;
-	
+public class ConstrainedJsonTreeCellEditor implements TreeCellEditor {	
 	private DefaultCellEditor _innerEditor;
 	private JComboBox<JsonElement> _possibleValuesComboBox;
 	private JsonTreeConstraint _constraint;
