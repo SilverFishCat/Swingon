@@ -1,3 +1,26 @@
+//The MIT License (MIT)
+//
+//Copyright (c) 2015 , SilverFishCat@GitHub
+//
+//Permission is hereby granted, free of charge, to any person obtaining a copy
+//of this software and associated documentation files (the "Software"), to deal
+//in the Software without restriction, including without limitation the rights
+//to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//copies of the Software, and to permit persons to whom the Software is
+//furnished to do so, subject to the following conditions:
+//
+//The above copyright notice and this permission notice shall be included in all
+//copies or substantial portions of the Software.
+//
+//THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+//SOFTWARE.
+
+
 package silver.json.swing;
 
 import java.awt.Component;
@@ -11,27 +34,49 @@ import javax.swing.event.CellEditorListener;
 import javax.swing.tree.TreeCellEditor;
 import javax.swing.tree.TreePath;
 
-import silver.json.swing.JsonTreeConstraint.JsonPath;
+import silver.json.swing.JsonTreeConstraints.JsonPath;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
+/**
+ * A tree cell editor for json objects, allowing only values from a list
+ * (or values from a list plus an open editor).
+ * 
+ * @author SilverFishCat
+ *
+ */
 public class ConstrainedJsonTreeCellEditor implements TreeCellEditor {	
 	private DefaultCellEditor _innerEditor;
 	private JComboBox<JsonElement> _possibleValuesComboBox;
-	private JsonTreeConstraint _constraint;
+	private JsonTreeConstraints _constraints;
 	
-	public ConstrainedJsonTreeCellEditor(JsonTreeConstraint constraint){
+	/**
+	 * Create a new constrained json tree cell editor.
+	 * 
+	 * @param constraints The constraints to use in the editor
+	 */
+	public ConstrainedJsonTreeCellEditor(JsonTreeConstraints constraints){
 		_possibleValuesComboBox = new JComboBox<JsonElement>();
 		_innerEditor = new DefaultCellEditor(_possibleValuesComboBox);
-		setConstraint(constraint);
+		setConstraints(constraints);
 	}
 	
-	public void setConstraint(JsonTreeConstraint constraint){
-		_constraint = constraint;
+	/**
+	 * Set the constraint for the editor.
+	 * 
+	 * @param constraints The constraints for the editor
+	 */
+	public void setConstraints(JsonTreeConstraints constraints){
+		_constraints = constraints;
 	}
-	public JsonTreeConstraint getConstraint(){
-		return _constraint;
+	/**
+	 * Get the editor's constraint.
+	 * 
+	 * @return The editor's constraints
+	 */
+	public JsonTreeConstraints getConstraints(){
+		return _constraints;
 	}
 	
 	@Override
@@ -42,17 +87,28 @@ public class ConstrainedJsonTreeCellEditor implements TreeCellEditor {
 				leaf, row);
 	}
 	
+	/**
+	 * Set up the combobox of options for the given path.
+	 * 
+	 * @param treePath The path to set the combobox for
+	 */
 	private void setUpComboBox(TreePath treePath){
 		_possibleValuesComboBox.removeAllItems();
 		
-		JsonPath jsonPath = getJsonPathFromTreePath(treePath);
+		JsonPath jsonPath = toJsonPathFromTreePath(treePath);
 		
-		for (JsonElement element : _constraint.getPossibleValues(jsonPath)) {
+		for (JsonElement element : _constraints.getPossibleValues(jsonPath)) {
 			_possibleValuesComboBox.addItem(element);
 		}
-		_possibleValuesComboBox.setEditable(_constraint.isFreelyEditable(jsonPath));
+		_possibleValuesComboBox.setEditable(_constraints.isFreelyEditable(jsonPath));
 	}
-	private JsonPath getJsonPathFromTreePath(TreePath path){
+	/**
+	 * Get the json path from a swing tree path.
+	 * 
+	 * @param path The tree path to convert
+	 * @return The json path matching to the given tree path
+	 */
+	private static JsonPath toJsonPathFromTreePath(TreePath path){
 		JsonPath result = new JsonPath();
 		
 		for (int i = 1; i < path.getPathCount(); i++) {
@@ -88,7 +144,11 @@ public class ConstrainedJsonTreeCellEditor implements TreeCellEditor {
 		MouseEvent event = (MouseEvent) anEvent;
 		JTree tree = (JTree) event.getSource();
 		
-		JsonTreeConstraint.Node node = _constraint.getNodeAtPath(getJsonPathFromTreePath(tree.getPathForLocation(event.getX(), event.getY())));
+		JsonTreeConstraints.Node node;
+		if(_constraints == null)
+			node = null;
+		else
+			node = _constraints.getNodeAtPath(toJsonPathFromTreePath(tree.getPathForLocation(event.getX(), event.getY())));
 		
 		if(node != null)
 			return node.isEditable();

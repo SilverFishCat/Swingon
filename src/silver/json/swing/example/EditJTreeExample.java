@@ -1,3 +1,26 @@
+//The MIT License (MIT)
+//
+//Copyright (c) 2015 , SilverFishCat@GitHub
+//
+//Permission is hereby granted, free of charge, to any person obtaining a copy
+//of this software and associated documentation files (the "Software"), to deal
+//in the Software without restriction, including without limitation the rights
+//to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//copies of the Software, and to permit persons to whom the Software is
+//furnished to do so, subject to the following conditions:
+//
+//The above copyright notice and this permission notice shall be included in all
+//copies or substantial portions of the Software.
+//
+//THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+//SOFTWARE.
+
+
 package silver.json.swing.example;
 
 import java.awt.BorderLayout;
@@ -15,7 +38,7 @@ import javax.swing.JScrollPane;
 
 import silver.json.swing.ConstrainedJsonTreeCellEditor;
 import silver.json.swing.JsonTreeCellRenderer;
-import silver.json.swing.JsonTreeConstraint;
+import silver.json.swing.JsonTreeConstraints;
 import silver.json.swing.JsonTreeModel;
 import silver.json.swing.PlainJsonTreeCellEditor;
 import silver.json.swing.TypedJsonTreeCellEditor;
@@ -26,6 +49,12 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.BoxLayout;
 
+/**
+ * An example of editing json jtrees, allowing all 3 types of available editors.
+ * 
+ * @author SilverFishCat
+ *
+ */
 public class EditJTreeExample extends JDialog implements ChangeListener {
 	/**
 	 * 
@@ -101,15 +130,15 @@ public class EditJTreeExample extends JDialog implements ChangeListener {
 				tree.setEditable(true);
 			}
 			else if(e.getSource() == rdbtnConstrainedJsonEditor){
-				JsonTreeConstraint.Node root = new JsonTreeConstraint.Node();
-				JsonTreeConstraint.Node son = new JsonTreeConstraint.Node();
+				JsonTreeConstraints.Node root = new JsonTreeConstraints.Node();
+				JsonTreeConstraints.Node son = new JsonTreeConstraints.Node();
 				son.setIsEditable(true);
 				List<JsonElement> possibleValues = new ArrayList<>();
 				possibleValues.add(new JsonPrimitive("option1"));
 				son.setPossibleValues(possibleValues);
 				son.setIsFreelyEditable(true);
 				root.getChildNodes().put("text", son);
-				tree.setCellEditor(new ConstrainedJsonTreeCellEditor(new JsonTreeConstraint(root)));
+				tree.setCellEditor(new ConstrainedJsonTreeCellEditor(new JsonTreeConstraints(root)));
 				tree.setEditable(true);
 			}
 		}
