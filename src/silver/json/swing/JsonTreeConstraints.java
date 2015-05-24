@@ -58,10 +58,46 @@ public class JsonTreeConstraints {
 		 * Create a new node constraints object.
 		 */
 		public Node(){
-			setChildNodes(null);
-			setPossibleValues(null);
-			setIsEditable(false);
-			setIsFreelyEditable(false);
+			this(null, null, false, false);
+		}
+		/**
+		 * Create a new node constraints object.
+		 * 
+		 * @param childNodes The child nodes of this node constraints object
+		 */
+		public Node(Map<String, Node> childNodes){
+			this(childNodes, null, false, false);
+		}
+		/**
+		 * Create a new node constraints object.
+		 * 
+		 * @param childNodes The child nodes of this node constraints object
+		 */
+		public Node(List<JsonElement> possibleValues){
+			this(possibleValues, false);
+		}
+		/**
+		 * Create a new node constraints object.
+		 * 
+		 * @param possibleValues The possible values for this node
+		 * @param isFreelyEditable Is this node free text editable
+		 */
+		public Node(List<JsonElement> possibleValues, boolean isFreelyEditable){
+			this(null, possibleValues, possibleValues != null && possibleValues.size() > 0 ,false);
+		}
+		/**
+		 * Create a new node constraints object.
+		 * 
+		 * @param childNodes The child nodes of this node constraints object
+		 * @param possibleValues The possible values for this node
+		 * @param isEditable Is this node editable at all
+		 * @param isFreelyEditable Is this node free text editable
+		 */
+		public Node(Map<String, Node> childNodes, List<JsonElement> possibleValues, boolean isEditable, boolean isFreelyEditable){
+			setChildNodes(childNodes);
+			setPossibleValues(possibleValues);
+			setIsEditable(isEditable);
+			setIsFreelyEditable(isFreelyEditable);
 		}
 		
 		/**
